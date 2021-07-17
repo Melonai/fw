@@ -16,12 +16,12 @@ class _FWState extends State<FW> {
     return WeatherProvider(
       child: Scaffold(
         extendBodyBehindAppBar: true,
-        backgroundColor: FWColors.FW_DARK_GREEN,
+        backgroundColor: FWColors.FW_BACKGROUND,
         appBar: _createAppBar(),
         body: SingleChildScrollView(
           child: Column(
             children: [
-              SizedBox(height: 140.0),
+              SizedBox(height: 100.0),
               Builder(builder: (BuildContext pageContext) {
                 final currentWeather = WeatherProvider.of(pageContext);
 
@@ -44,15 +44,15 @@ class _FWState extends State<FW> {
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
-      toolbarHeight: 90.0,
+      centerTitle: true,
       flexibleSpace: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                FWColors.FW_DARK_GREEN,
-                FWColors.FW_DARK_GREEN.withOpacity(0)
+                FWColors.FW_BACKGROUND,
+                FWColors.FW_BACKGROUND.withOpacity(0)
               ],
               stops: [
                 0.25,

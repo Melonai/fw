@@ -25,15 +25,15 @@ class App extends StatelessWidget {
   }
 
   ThemeData _createThemeData(ThemeData currentThemeData) {
-    final overpassTheme =
-        GoogleFonts.overpassTextTheme(currentThemeData.textTheme);
+    final openSansTheme =
+        GoogleFonts.openSansTextTheme(currentThemeData.textTheme);
 
     return ThemeData(
       brightness: Brightness.dark,
       accentColor: Colors.white,
-      textTheme: overpassTheme.apply(bodyColor: Colors.white),
-      primaryTextTheme: overpassTheme.apply(bodyColor: Colors.white),
-      accentTextTheme: overpassTheme,
+      textTheme: openSansTheme.apply(bodyColor: Colors.white),
+      primaryTextTheme: openSansTheme.apply(bodyColor: Colors.white),
+      accentTextTheme: openSansTheme,
     );
   }
 }
