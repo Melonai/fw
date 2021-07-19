@@ -1,73 +1,65 @@
 import 'package:flutter/material.dart';
-import 'package:fw/constants.dart';
 import 'package:fw/pages/blank_page.dart';
 import 'package:fw/pages/loading_page.dart';
+import 'package:fw/pages/search_page.dart';
 import 'package:fw/pages/weather_page.dart';
 import 'package:fw/providers/weather_provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-class FW extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => _FWState();
-}
-
-class _FWState extends State<FW> {
+class FW extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return WeatherProvider(
-      child: Scaffold(
-        extendBodyBehindAppBar: true,
-        backgroundColor: FWColors.FW_BACKGROUND,
-        appBar: _createAppBar(),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: 100.0),
-              Builder(builder: (BuildContext pageContext) {
-                final currentWeather = WeatherProvider.of(pageContext);
+    return MaterialApp(
+      title: "FW",
+      theme: _createThemeData(Theme.of(context)),
+      initialRoute: "/",
+      routes: {
+        "/": (_context) => WeatherProvider(
+              child: _weatherPage(),
+            ),
+        "/city": (context) {
+          final location =
+              ModalRoute.of(context)!.settings.arguments! as String;
 
-                if (currentWeather.loading) {
-                  return LoadingPage();
-                } else if (currentWeather.weather == null) {
-                  return BlankPage();
-                } else {
-                  return WeatherPage(weather: currentWeather.weather!);
-                }
-              }),
-            ],
-          ),
-        ),
-      ),
+          return WeatherProvider(
+            child: _weatherPage(),
+            location: location,
+          );
+        },
+        "/search": (_context) => SearchPage()
+      },
     );
   }
 
-  AppBar _createAppBar() {
-    return AppBar(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      centerTitle: true,
-      flexibleSpace: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                FWColors.FW_BACKGROUND,
-                FWColors.FW_BACKGROUND.withOpacity(0)
-              ],
-              stops: [
-                0.25,
-                1
-              ]),
-        ),
-      ),
-      title: Builder(builder: (BuildContext context) {
+  Widget _weatherPage() {
+    return Builder(
+      builder: (context) {
         final currentWeather = WeatherProvider.of(context);
-        return Text(
-          currentWeather.location ?? 'Loading...',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-        );
-      }),
-      actions: [IconButton(onPressed: () {}, icon: Icon(Icons.search))],
+
+        if (currentWeather.loading) {
+          return LoadingPage();
+        } else if (currentWeather.weather == null) {
+          return BlankPage();
+        } else {
+          return WeatherPage(
+            weather: currentWeather.weather!,
+            location: currentWeather.location!,
+          );
+        }
+      },
+    );
+  }
+
+  ThemeData _createThemeData(ThemeData currentThemeData) {
+    final openSansTheme =
+        GoogleFonts.openSansTextTheme(currentThemeData.textTheme);
+
+    return ThemeData(
+      brightness: Brightness.dark,
+      accentColor: Colors.white,
+      textTheme: openSansTheme.apply(bodyColor: Colors.white),
+      primaryTextTheme: openSansTheme.apply(bodyColor: Colors.white),
+      accentTextTheme: openSansTheme,
     );
   }
 }

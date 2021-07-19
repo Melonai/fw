@@ -5,15 +5,21 @@ import 'package:weather/weather.dart';
 
 class WeatherProvider extends StatefulWidget {
   final Widget child;
+  final String? location;
 
-  const WeatherProvider({Key? key, required this.child}) : super(key: key);
+  const WeatherProvider({
+    Key? key,
+    required this.child,
+    this.location,
+  }) : super(key: key);
 
   static CurrentWeather of(BuildContext context) {
     return context.dependOnInheritedWidgetOfExactType<InheritedWeather>()!.data;
   }
 
   @override
-  CurrentWeather createState() => CurrentWeather(child: child);
+  CurrentWeather createState() =>
+      CurrentWeather(child: child, location: location);
 }
 
 class InheritedWeather extends InheritedWidget {
@@ -38,12 +44,17 @@ class CurrentWeather extends State<WeatherProvider> {
 
   CurrentWeather({
     required this.child,
+    this.location,
   });
 
   @override
   void initState() {
     super.initState();
-    setWeatherByCoordinates();
+    if (location != null) {
+      setWeatherByCity(location!);
+    } else {
+      setWeatherByCoordinates();
+    }
   }
 
   Future setWeatherByCity(String location) async {
@@ -83,11 +94,7 @@ class CurrentWeather extends State<WeatherProvider> {
       }
     }
 
-    print("got perms :)");
-
     final locationData = await location.getLocation();
-
-    print(locationData.toString());
 
     final wf = new WeatherFactory(dotenv.env['OPENWEATHER_TOKEN']!);
     final weather = await wf.currentWeatherByLocation(

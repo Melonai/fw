@@ -1,36 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:fw/constants.dart';
+import 'package:fw/widgets/structural/fw_page.dart';
 import 'package:weather/weather.dart';
 
 class WeatherPage extends StatelessWidget {
+  final String location;
   final Weather weather;
 
-  WeatherPage({Key? key, required this.weather}) : super(key: key);
+  WeatherPage({Key? key, required this.weather, required this.location})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        makeCurrentView(),
-        // Scrolly Boys
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: [
-              SizedBox(width: 24.0),
-              makeInfoBox("Feels like",
-                  "${this.weather.tempFeelsLike!.celsius!.toInt()}°"),
-              makeInfoBox("Wind", "${this.weather.windSpeed} m/s"),
-              makeInfoBox("Humidity",
-                  this.weather.humidity!.toStringAsPrecision(2) + "%"),
-            ],
-          ),
-        ),
+    return FWPage(
+      title: Text(
+        this.location,
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+      ),
+      actions: [
+        IconButton(
+            onPressed: () => Navigator.of(context).pushNamed("/search"),
+            icon: Icon(Icons.search))
       ],
+      child: Column(
+        children: [
+          _makeCurrentView(),
+          _makeDetailRow(),
+        ],
+      ),
     );
   }
 
-  Padding makeCurrentView() {
+  Padding _makeCurrentView() {
     return new Padding(
       padding: new EdgeInsets.all(24.0),
       child: Container(
@@ -98,7 +99,23 @@ class WeatherPage extends StatelessWidget {
     );
   }
 
-  Widget makeInfoBox(String title, String content) {
+  SingleChildScrollView _makeDetailRow() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          SizedBox(width: 24.0),
+          _makeDetailBox(
+              "Feels like", "${this.weather.tempFeelsLike!.celsius!.toInt()}°"),
+          _makeDetailBox("Wind", "${this.weather.windSpeed} m/s"),
+          _makeDetailBox(
+              "Humidity", this.weather.humidity!.toStringAsPrecision(2) + "%"),
+        ],
+      ),
+    );
+  }
+
+  Widget _makeDetailBox(String title, String content) {
     return Container(
       height: 80,
       width: 120,
